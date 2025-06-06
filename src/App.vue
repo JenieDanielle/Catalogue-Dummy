@@ -6,7 +6,6 @@ import Footer from './components/FooterComponent.vue'
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
     <Navbar/>
-    <p>teste</p>
     <div class="container mx-auto px-4 py-6">
       <router-view></router-view>
     </div>
