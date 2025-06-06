@@ -38,14 +38,14 @@ onMounted(fetchProducts)
 <template>
   <h1 class="text-3xl text-indigo-900 dark:text-indigo-200 font-bold mb-4">Produtos ></h1>
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-    <div v-for="product in products" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+    <router-link v-for="product in products" :key="product.id" :to="`/product/${product.id}`" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg">
       <img :src="product.thumbnail" :alt="product.title" class="mx-auto object-center h-40 object-contain" />
       <div class="p-4 text-gray-800 dark:text-white">
         <h2 class="text-md font-semibold mb-1 truncate">{{ product.title }}</h2>
         <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">{{ product.description }}</p>
         <p class="font-bold text indigo-600 dark:text-indigo-300">R$ {{ product.price }}</p>
       </div>
-    </div>
+    </router-link>
   </div>
 
   <div class="flex justify-center gap-4 mt-6">
