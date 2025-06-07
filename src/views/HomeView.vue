@@ -1,16 +1,22 @@
 <script setup>
-import { watch, ref } from 'vue'
+import { watch, ref, toRef } from 'vue'
 import { useProducts } from '../composables/useProducts'
 
 const props = defineProps({
   searchTerm: String
 })
 
-const searchTerm = ref(props.searchTerm || '')
-const {products, offset, allProducts, limit, nextPage, previousPage, sortOption} = useProducts(searchTerm)
+const selectedCategory = ref('all')
+const searchTermRef = toRef(props, 'searchTerm')
 
-watch(() => props.searchTerm, (newVal) => {
-  searchTerm.value = newVal
+const {products, nextPage, previousPage, sortOption, offset, limit, allProducts} = useProducts(searchTermRef, selectedCategory)
+
+// watch(toRef(props, 'searchTerm'), (newVal) => {
+//   internalSearchTerm.value = newVal
+// })
+
+watch(searchTermRef, (newTerm) => {
+  console.log('Buscando por:', newTerm)
 })
 
 </script>
@@ -28,19 +34,26 @@ watch(() => props.searchTerm, (newVal) => {
     </select>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-    <router-link v-for="product in products" :key="product.id" :to="`/product/${product.id}`" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg">
-      <img :src="product.thumbnail" :alt="product.title" class="mx-auto object-center h-40 object-contain" />
-      <div class="p-4 text-gray-800 dark:text-white">
-        <h2 class="text-md font-semibold mb-1 truncate">{{ product.title }}</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">{{ product.description }}</p>
-        <p class="font-bold text indigo-600 dark:text-indigo-300">R$ {{ product.price }}</p>
-      </div>
-    </router-link>
+  <div v-if="products.length === 0" class="flex justify-center items-center h-[300px]">
+    <p class="text-gray-600 dark:text-gray-300 text-lg">Nenhum produto encontrado...</p>
   </div>
 
-  <div class="flex justify-center gap-4 mt-6">
-      <button @click="previousPage" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50" :disabled="offset === 0">Anterior</button>
-      <button @click="nextPage" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50" :disabled="(offset + limit) >= allProducts">Próximo</button>
+  <div v-else>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+      <router-link v-for="product in products" :key="product.id" :to="`/product/${product.id}`" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+        <img :src="product.thumbnail" :alt="product.title" class="mx-auto object-center h-40 object-contain" />
+        <div class="p-4 text-gray-800 dark:text-white">
+          <h2 class="text-md font-semibold mb-1 truncate">{{ product.title }}</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">{{ product.description }}</p>
+          <p class="font-bold text indigo-600 dark:text-indigo-300">R$ {{ product.price }}</p>
+        </div>
+      </router-link>
+    </div>
+    
+    <div class="flex justify-center gap-4 mt-6">
+        <button @click="previousPage" class="px-4 py-2 rounded-full bg-indigo-500 hover:bg-indigo-700 text-white disabled:opacity-50" :disabled="offset === 0">Anterior</button>
+        <button @click="nextPage" class="px-4 py-2 rounded-full bg-indigo-500 hover:bg-indigo-700 text-white disabled:opacity-50" :disabled="(offset + limit) >= allProducts">Próximo</button>
+    </div>
   </div>
+
 </template>

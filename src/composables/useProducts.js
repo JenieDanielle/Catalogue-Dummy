@@ -1,7 +1,14 @@
-import {ref, watch, onMounted} from 'vue'
 import axios from 'axios'
+import { ref, watch, onMounted, isRef } from 'vue'
 
-export function useProducts(searchTerm){
+export function useProducts(searchTerm, selectedCategory) {
+    if (!isRef(searchTerm)) {
+        searchTerm = ref('')
+    }
+    if (!isRef(selectedCategory)) {
+        selectedCategory = ref('all')
+    }
+
     const products = ref([])
     const productsAll = ref([])
     const offset = ref(0)
@@ -9,43 +16,69 @@ export function useProducts(searchTerm){
     const limit = 12
     const sortOption = ref('none')
 
-    const fetchProducts = async () =>{
-        let url = ''
+    const fetchProducts = async () => {
+        try {
+            if (searchTerm.value) {
+                const res = await axios.get(`https://dummyjson.com/products/search?q=${searchTerm.value}`)
+                const data = res.data.products || []
+                productsAll.value = data
+                allProducts.value = data.length
 
-        if (searchTerm.value) {
-            url = `https://dummyjson.com/products/search?q=${searchTerm.value}`
-        } else {
-            url = `https://dummyjson.com/products`
+            } else if (selectedCategory.value && selectedCategory.value !== 'all') {
+                const res = await axios.get(`https://dummyjson.com/products/category/${selectedCategory.value}`)
+                const data = res.data.products || []
+                productsAll.value = data
+                allProducts.value = data.length
+
+            } else {
+                productsAll.value = []
+                let skip = 0
+                const maxPerRequest = 30
+                let fetchedTotal = 0
+                let finished = false
+
+                while (!finished) {
+                    const res = await axios.get(`https://dummyjson.com/products?limit=${maxPerRequest}&skip=${skip}`)
+                    const data = res.data.products || []
+                    productsAll.value.push(...data)
+                    skip += maxPerRequest
+                    fetchedTotal += data.length
+                    if (fetchedTotal >= res.data.total) {
+                    finished = true
+                    }
+                }
+                allProducts.value = productsAll.value.length
+            }
+
+            offset.value = 0
+            sortProducts()
+
+        } catch (error) {
+            console.error('Erro ao buscar todos os produtos:', error)
         }
-
-        const response = await axios.get(url)
-        productsAll.value = response.data.products || response.data
-        allProducts.value = response.data.total || response.data.length || response.data.products.length
-        sortProducts()
-        paginateProducts()
     }
 
+
     const sortProducts = () => {
-        if (!products.value) return
+        let sorted = [...productsAll.value]
 
-        let sorted = []
-
-        switch(sortOption.value) {
+        switch (sortOption.value) {
             case 'priceAsc':
-                sorted = [...productsAll.value].sort((a, b) => a.price - b.price)
+                sorted.sort((a, b) => a.price - b.price)
                 break
             case 'priceDesc':
-                sorted = [...productsAll.value].sort((a, b) => b.price - a.price)
+                sorted.sort((a, b) => b.price - a.price)
                 break
             case 'nameAsc':
-                sorted = [...productsAll.value].sort((a, b) => a.title.localeCompare(b.title))
+                sorted.sort((a, b) => a.title.localeCompare(b.title))
                 break
             case 'nameDesc':
-                sorted = [...productsAll.value].sort((a, b) => b.title.localeCompare(a.title))
+                sorted.sort((a, b) => b.title.localeCompare(a.title))
                 break
             default:
-                sorted = [...productsAll.value]
+                break  
         }
+
         productsAll.value = sorted
         paginateProducts()
     }
@@ -54,28 +87,27 @@ export function useProducts(searchTerm){
         products.value = productsAll.value.slice(offset.value, offset.value + limit)
     }
 
-    const nextPage = async () => {
+    const nextPage = () => {
         if (offset.value + limit < allProducts.value) {
             offset.value += limit
             paginateProducts()
         }
     }
 
-    const previousPage = async () => {
+    const previousPage = () => {
         if (offset.value >= limit) {
             offset.value -= limit
             paginateProducts()
         }
     }
 
-    watch(searchTerm, () => {
+    watch([searchTerm, selectedCategory], () => {
         offset.value = 0
         fetchProducts()
     })
 
     watch(sortOption, () => {
         sortProducts()
-        paginateProducts()
     })
 
     onMounted(fetchProducts)
@@ -87,6 +119,6 @@ export function useProducts(searchTerm){
         limit,
         sortOption,
         nextPage,
-        previousPage
+        previousPage,
     }
 }

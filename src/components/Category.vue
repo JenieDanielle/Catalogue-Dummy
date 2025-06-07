@@ -5,7 +5,7 @@
         </h2>
 
         <div v-if="products.length === 0">
-            <p>Nenhum produto encontrado para essa categoria...</p>
+            <p class="flex justify-center items-center h-[300px] text-gray-600 dark:text-gray-300">Nenhum produto encontrado para essa categoria...</p>
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

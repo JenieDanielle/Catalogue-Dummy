@@ -3,7 +3,7 @@
   <nav class="sticky top-0 z-50 flex items-center w-full justify-between py-4 px-8 dark:bg-gray-900 border-b-2 border-gray-200 dark:border-gray-700 shadow-sm backdrop-blur bd-opacity-95">
     
     <!-- sanduiche -->
-    <div class="flex items-center gap-4">
+    <div class="w-full flex flex-wrap items-center gap-4">
       <button @click="toggleMenu" class="md:hidden text-white text-2xl mr-4">
           <i class="bi bi-list text-indigo-600"></i>
       </button>
