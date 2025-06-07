@@ -30,7 +30,7 @@ onMounted(fetchProduct)
                 {{ product.description}}
             </p>
             <p class="font-bold text-[25px]">
-                $ {{ product.price }}
+                R$ {{ product.price }}
             </p>
             <p class="mb-2">
                 (stock : {{ product.stock}})
