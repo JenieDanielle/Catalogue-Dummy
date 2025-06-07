@@ -1,29 +1,55 @@
-# catalogue_dummy
+# Catalogue Dummy
 
-This template should help get you started developing with Vue 3 in Vite.
+Esse é um projeto de catálogo de produtos simples e responsivo construído com **Vue.js 3**, **Vite**, **Axios** e **TailwindCSS**, consumindo a API pública DummyJSON.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Funcionalidades
 
-## Customize configuration
+- Listagem de produtos com nome, imagem, preço, categoria e disponibilidade.
+- Grid responsivo para exibição dos produtos.
+- Paginação para navegar entre páginas de produtos.
+- Visualização detalhada do produto ao clicar nele.
+- Filtro por categorias via menu lateral.
+- Busca de produtos por nome em tempo real.
+- Ordenação dos produtos por preço e nome.
+- Design responsivo, funcionando bem em dispositivos móveis e desktop.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+## Tecnologias Utilizadas
 
-```sh
+- [Vue.js 3](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [Axios](https://axios-http.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- API DummyJSON ([Documentação](https://dummyjson.com/))
+
+---
+
+## Como rodar o projeto localmente
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/JenieDanielle/Catalogue-Dummy.git
+cd Catalogue-Dummy
+```
+
+2. Instale as dependências:
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+3. Inicie o servidor de desenvolvimento:
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+4. Build para Produção:
 
-```sh
+```bash
 npm run build
 ```
